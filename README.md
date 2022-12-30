@@ -1,11 +1,6 @@
 # SBoxx V2.0b 🗳 ![coma](https://user-images.githubusercontent.com/66770178/130568540-89a03d3f-6ccb-4ceb-9ba9-c898bca69d02.png)
 Fully featured always on display
 
-## Previews
-![image](https://user-images.githubusercontent.com/66770178/210039587-db6e477d-e4e1-466d-b7b5-b4891432ad82.png)
-![image](https://user-images.githubusercontent.com/66770178/210039616-a780b5de-789e-45ef-bdb5-6c5ef343c72c.png)
-![image](https://user-images.githubusercontent.com/66770178/210039669-04aa9b00-9992-4e37-b300-18666b790ee5.png)
-
 ## Compatibility
 Replit
 Hokuero
@@ -24,6 +19,11 @@ Linux, Windows, (MacOS?)
 ## Usage
 HOW TO CREATE A ACCOUNT - To create a account you'll need to goto this link "https://yoursite.com/api/admin/gen-account" and set the hash to the const named AdminIP then re-attempt to send the request to the site. In the test theres a python file with the function that allows you too create an account easlly.
 USING VIA SHAREX - ![image](https://user-images.githubusercontent.com/66770178/210040024-5d68ad7c-65e3-43e3-a24a-aef4d1e7fb3b.png)
+
+## Previews
+![image](https://user-images.githubusercontent.com/66770178/210039587-db6e477d-e4e1-466d-b7b5-b4891432ad82.png)
+![image](https://user-images.githubusercontent.com/66770178/210039616-a780b5de-789e-45ef-bdb5-6c5ef343c72c.png)
+![image](https://user-images.githubusercontent.com/66770178/210039669-04aa9b00-9992-4e37-b300-18666b790ee5.png)
 
 ## License
 [APACHE](https://raw.githubusercontent.com/SK3-4121/SBoxx-2.0/main/LICENSE)
