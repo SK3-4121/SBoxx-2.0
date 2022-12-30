@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const DEBUG = false;
 const Ip = "example.com";
-port = 80;
+const port = 80;
 
 function uploads() {
     fs.readdir("./uploads", (err, files) => {
@@ -34,17 +34,22 @@ function uploads() {
 
                 Uploaders.findById(id)
                     .then((data) => {
+                        const author_name = data.author_name;
+                        const author_url = data.author_url;
+                        const provider_name = data.provider_name;
+                        const provider_url = data.provider_url;
+
                         const hex = data.hex;
-                        const top = data.top;
                         const title = data.title;
                         const description = data.description;
                         const setting = data.setting;
+
                         let hook = null;
 
                         if (DEBUG == true) {
-                            hook = new libhookz( `http://${Ip}:${port}/raw/${file}`, hex, top, title, description, setting );
+                            hook = new libhookz( `${Ip}:${port}`, `http://${Ip}:${port}/raw/${file}`, hex, title, description, setting, author_name, author_url, provider_name, provider_url );
                         } else {
-                            hook = new libhookz( `http://${Ip}/raw/${file}`, hex, top, title, description, setting );
+                            hook = new libhookz( Ip, `http://${Ip}/raw/${file}`, hex, title, description, setting, author_name, author_url, provider_name, provider_url );
                         }
 
                         if (data.setting == 1) {
@@ -69,6 +74,24 @@ function uploads() {
 app.get("/raw/:file", (req, res) => {
     const file = req.params.file;
     res.sendFile(path.join(__dirname, `./uploads/${file}`));
+});
+
+app.get("/jason", (req, res) => {
+    const author_name = req.query.an;
+    const author_url = req.query.au;
+    const provider_name = req.query.pn;
+    const provider_url = req.query.pu;
+
+    dataset = {
+        "type": "link",
+        "version": "1.0",
+        "author_name": author_name,
+        "author_url": author_url,
+        "provider_name": provider_name,
+        "provider_url": provider_url,
+    }
+
+    res.json(dataset);
 });
 
 app.get("/admin", (req, res) => {
@@ -102,47 +125,35 @@ app.post("/api/upload", (req, res) => {
             if (!req.files) {
                 res.json({ error: "No file was sent." });
             } else {
-                try {
-                    const file = req.files.file;
-                    const ext = file.name.split(".").pop();
-                    const filename = auth + "-" + crypto.randomBytes(16).toString("hex") + "." + ext;
+                const setter = data.setter;
+                const fakelink = data.fakelink;
+                const file = req.files.file;
+                const ext = file.name.split(".").pop();
+                const filename = auth + "-" + crypto.randomBytes(16).toString("hex") + "." + ext;
 
-                    if (extensionAllowed(ext)) {
-                        file.mv(`./uploads/${filename}`, (err) => {
-                            if (err) {
-                                console.log(err);
-                                res.json({ error: "An error occured." });
+                if (extensionAllowed(ext)) {
+                    file.mv(`./uploads/${filename}`, (err) => {
+                        if (err) {
+                            console.log(err);
+                            res.json({ error: "An error occured." });
+                        } else {
+                            if (DEBUG == true) {
+                                if (setter == 1) {
+                                    res.send(`http://${Ip}:${port}/${filename}`);
+                                } else if (setter == 2) {
+                                    res.send(`<${fakelink}> ||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||||||||||http://${Ip}:${port}/${filename}`);
+                                }
                             } else {
-                                setting = data.setting;
-                                setter = data.setter;
-
-                                fakelink = data.fakelink;
-                                hex = data.hex;
-                                top = data.top;
-                                title = data.title;
-                                description = data.description;
-
-                                if (DEBUG == true) {
-                                    if (setter == 1) {
-                                        res.send(`http://${Ip}:${port}/${filename}`);
-                                    } else if (setter == 2) {
-                                        res.send(`<${fakelink}> ||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||||||||||http://${Ip}:${port}/${filename}`);
-                                    }
-                                } else {
-                                    if (setter == 1) {
-                                        res.send(`http://${Ip}/${filename}`);
-                                    } else if (setter == 2) {
-                                        res.send(`<${fakelink}> ||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||||||||||http://${Ip}/${filename}`);
-                                    };
+                                if (setter == 1) {
+                                    res.send(`http://${Ip}/${filename}`);
+                                } else if (setter == 2) {
+                                    res.send(`<${fakelink}> ||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||||||||||http://${Ip}/${filename}`);
                                 };
                             };
-                        });
-                    } else {
-                        res.json({ error: "Extension not allowed." });
-                    }
-                } catch (err) {
-                    console.log(err);
-                    res.json({ error: "Your auth was incorrect." });
+                        };
+                    });
+                } else {
+                    res.json({ error: "Extension not allowed." });
                 };
             };
         })
@@ -153,8 +164,8 @@ app.post("/api/upload", (req, res) => {
 });
 
 app.get("/api/admin/gen-account", (req, res) => {
-    const ip = req.headers['x-forwarded-for'];
-    const hash = crypto.createHash('md5').update(ip).digest("hex");
+    const _ip = "428";
+    const hash = crypto.createHash('md5').update(_ip).digest("hex");
 
     if (hash == AdminIP) {
         const newUploader = new Uploaders({
@@ -163,9 +174,13 @@ app.get("/api/admin/gen-account", (req, res) => {
             setting: 1,
             setter: 1,
 
+            author_name: "Default",
+            author_link: "https://sk3ishellacute.gg/",
+            provider_name: "Second Default",
+            provider_link: "https://sk3ishellacute.gg/",
+
             fakelink: "https://sk3ishellacute.gg/",
             hex: "#FFFFFF",
-            top: "Top",
             title: "Untitled",
             description: "No description",
         });
@@ -178,7 +193,7 @@ app.get("/api/admin/gen-account", (req, res) => {
                 console.log(err);
             })
     } else {
-        res.json({ auth: false, "ip": ip, "hash": hash });
+        res.json({ auth: false, "ip": _ip, "hash": hash });
     }
 });
 
