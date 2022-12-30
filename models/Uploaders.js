@@ -7,9 +7,13 @@ const uploadersSchema = new Schema({
     setting: {type: Number, required: true},
     setter: {type: Number, required: true},
 
+    author_name: {type: String, required: true},
+    author_link: {type: String, required: true},
+    provider_name: {type: String, required: true},
+    provider_link: {type: String, required: true},
+
     fakelink: {type: String, required: true},
     hex: {type: String, required: true},
-    top: {type: String, required: true},
     title: {type: String, required: true},
     description: {type: String, required: true},
 }, { timestamps: true });
