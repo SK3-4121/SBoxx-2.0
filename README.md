@@ -1,5 +1,5 @@
 # SBoxx V2.0b 🗳 ![coma](https://user-images.githubusercontent.com/66770178/130568540-89a03d3f-6ccb-4ceb-9ba9-c898bca69d02.png)
-Fully featured always on display
+If you ever need to contact me send me an message on discord (i dont really use it all that much anymore) it'll take me a day-3days to reply but try anyways ""
 
 ## Compatibility
 Replit
